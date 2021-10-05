@@ -1,33 +1,53 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Threading.Tasks.Dataflow;
-using PredictionViewModel;
-
+using Prediction;
 
 namespace ConsoleApp
 {
     class Program
     {
-
+        private static void StopPredicting(object sender, ConsoleCancelEventArgs args)
+        {
+            args.Cancel = true;
+            viewModel.StopPrediction();
+        }
+        private static PredictionClass viewModel;
         static async Task Main()
         {
-            string model_path = @"E:\Library\Documents\GitHub\2021-autumn prac\409_bekresheva\Model ONNX\yolov4.onnx";
-            var viewModel = new PredictionViewModelClass(new ConsoleUIServices(), model_path);
-            Task SetFolder = Task.Run(() => viewModel.SetFolder());
-            Task Init = Task.Run(() => viewModel.Init());
-            Task.WaitAll(new Task[] { Init, SetFolder });
+            //Добавляем обработчик ctrl+c
+            Console.CancelKeyPress += new ConsoleCancelEventHandler(StopPredicting);
 
-            var ab = new ActionBlock<string>(async name => viewModel.Predict_One(name),
-                new ExecutionDataflowBlockOptions
-                {
-                    MaxDegreeOfParallelism = Environment.ProcessorCount
-                }
-            );
-            Parallel.ForEach(viewModel.image_names, name => ab.Post(name));
-            ab.Complete();
-            await ab.Completion;
-            //Ввод результата:
-            //Parallel.ForEach(viewModel.image_names, _ => viewModel.Output_One());
+            Console.WriteLine("Для выхода нажмите Ctrl+C");
+
+            string model_path = @"E:\Library\Documents\GitHub\2021-autumn prac\409_bekresheva\Model ONNX\yolov4.onnx";
+
+            //Чтобы PredictionClass знал, что ему делать с результатами, передаём ему ui, и запускаем init
+            ConsoleUIServices ui = new ConsoleUIServices();
+            try
+            {
+                viewModel = new PredictionClass(model_path, ui);
+            }
+            catch (Exception )
+            {
+                Console.WriteLine("Я не знаю, в чём дело, но, скорее всего, проблемы с открытием файлов");
+                Console.WriteLine("Убедитесь, что в директории находятся только файлы .jpg");
+            }
+            
+            Task Init = Task.Run(() => viewModel.Init());
+            await Init;
+
+            //Запускаем обработку
+            Task Prediction = viewModel.StartPredictionAsync();
+            try
+            {
+                Prediction.Wait();
+                if (!Prediction.IsCompleted)
+                    throw new Exception("Task is not complited");
+            }catch (Exception ex)
+            {
+                //Console.WriteLine(ex.Message);
+            }
+            return;
         }
     }
 }

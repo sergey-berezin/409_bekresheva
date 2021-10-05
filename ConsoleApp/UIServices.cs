@@ -1,38 +1,26 @@
 ﻿using System;
-using System.Collections.Immutable;
-using PredictionViewModel;
+using Prediction;
 using YOLOv4MLNet.DataStructures;
 
 namespace ConsoleApp
 {
     public class ConsoleUIServices : IUIServices
     {
-        void IErrorInterface.ErrorFunc(string s)
-        {
-            Console.WriteLine($"Error: {s}");
-        }
-
         string IInputInterface.GetPath()
         {
             //return @"E:\Library\Documents\GitHub\2021-autumn prac\409_bekresheva\Assets\Images";
             
             Console.WriteLine("Введите путь, по которому будет выполняться магия:");
             return Console.ReadLine();
-            
         }
 
-        void IOutputInterface.OutputFunc(ImmutableList<YoloV4Result> results_list)
+        void IOutputInterface.OutputFunc(YoloV4Result res)
         {
-            foreach (var res in results_list)
-            {
-                Console.WriteLine(res.Label);
-                //Console.WriteLine(res);
-            }
+            Console.WriteLine(res);
         }
-
-        void IOutputInterface.OutputFunc(string s)
+        void IOutputInterface.OutputFunc(string res)
         {
-            Console.WriteLine($"Output: {s}");
+            Console.WriteLine(res);
         }
     }
 }

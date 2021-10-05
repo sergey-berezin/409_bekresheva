@@ -2,7 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataStructures\DataStructures.csproj" />
-    <ProjectReference Include="..\PredictionModel\PredictionViewModel.csproj" />
+    <ProjectReference Include="..\PredictionModel\Prediction.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataStructures", "DataStruc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyApp", "ConsoleApp\MyApp.csproj", "{9F4EE9EA-A8CE-40EC-ABF0-F479FEA03641}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PredictionViewModel", "PredictionModel\PredictionViewModel.csproj", "{D316A9FA-89A6-4CF3-8032-3860CAE8E279}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prediction", "PredictionModel\Prediction.csproj", "{D316A9FA-89A6-4CF3-8032-3860CAE8E279}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

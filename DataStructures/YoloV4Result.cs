@@ -27,7 +27,7 @@
 
         public override string ToString()
         {
-            return $"Label: {Label}, Confidence: {Confidence}, Box: {BBox}";
+            return $"Label: {Label}; Confidence: {Confidence}; Box: {BBox[0]}, {BBox[1]}, {BBox[2]}, {BBox[3]}";
         }
     }
 }

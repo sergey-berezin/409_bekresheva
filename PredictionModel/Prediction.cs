@@ -1,9 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Collections.Concurrent;
-using System.Collections.Immutable;
 using YOLOv4MLNet.DataStructures;
 using System.Drawing;
 using System.Threading.Tasks;
@@ -14,66 +10,60 @@ using System.Linq;
 using static Microsoft.ML.Transforms.Image.ImageResizingEstimator;
 using System.Threading;
 
-namespace PredictionViewModel
+namespace Prediction
 {
-
-    public abstract class PredictionViewModelBase : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
     public interface IOutputInterface
     {
-        void OutputFunc(ImmutableList<YoloV4Result> results_list);
-        void OutputFunc(string s);
+        void OutputFunc(YoloV4Result res);
+        void OutputFunc(string res);
     }
     public interface IInputInterface
     {
         string GetPath();
     }
-    public interface IErrorInterface
-    {
-        void ErrorFunc(string s);
-    }
-    public interface IUIServices : IOutputInterface, IInputInterface, IErrorInterface { }
-    public class PredictionViewModelClass: PredictionViewModelBase
+    public interface IUIServices : IOutputInterface, IInputInterface { }
+    public class PredictionClass
     {
         private const float scoreThres = 0.3f;
         private const float iouThres = 0.7f;
         private string _modelPath;
-        private ConcurrentBag<ImmutableList<YoloV4Result>> _allPredictionResults;
-        private readonly IUIServices UI;
+        private string[] _image_names;
         private CancellationTokenSource _cancellationTokenSource;
         private CancellationToken _token;
-        private string[] _image_names;
-        public string[] image_names
-        {
-            get => _image_names;
-        }
+
+        private ActionBlock<string> _prediction;
+        private ActionBlock<YoloV4Result> _handleOneAB;
+
         private PredictionEngine<YoloV4BitmapData, YoloV4Prediction> _predictionEngine;
-        public ConcurrentBag<ImmutableList<YoloV4Result>> AllPredictionResults
+
+        private IUIServices UI;
+        public PredictionClass(string _mp, IUIServices ui)
         {
-            get => _allPredictionResults;
-        }
-        public PredictionViewModelClass(IUIServices _ui, string _mp)
-        {
-            _allPredictionResults = new ConcurrentBag<ImmutableList<YoloV4Result>>();
-            OnPropertyChanged(nameof(AllPredictionResults));
-            UI = _ui;
             _image_names = null;
             _modelPath = _mp;
             _cancellationTokenSource = new CancellationTokenSource();
             _token = _cancellationTokenSource.Token;
+            _image_names = Directory.GetFiles(ui.GetPath());
+            UI = ui;
+            _handleOneAB = new ActionBlock<YoloV4Result>((res) => {
+                //Записать результат, если нужно
+
+                //Вывести результат на экран:
+                UI.OutputFunc(res);
+            }, new ExecutionDataflowBlockOptions
+            {
+                MaxDegreeOfParallelism = Environment.ProcessorCount
+            });
+
+            _prediction = new ActionBlock<string>(name => PredictOneAsync(name),
+                new ExecutionDataflowBlockOptions
+                {
+                    CancellationToken = _token,
+                    MaxDegreeOfParallelism = Environment.ProcessorCount
+                }
+            );
         }
-        public void SetFolder()
-        {
-            string image_folder = UI.GetPath();
-            _image_names = Directory.GetFiles(image_folder);
-        }
+
         public void Init()
         {
             MLContext mlContext = new MLContext();
@@ -99,61 +89,45 @@ namespace PredictionViewModel
                     },
                     modelFile: _modelPath, recursionLimit: 100));
 
-            // Fit on empty list to obtain input data schema
             var model = pipeline.Fit(mlContext.Data.LoadFromEnumerable(new List<YoloV4BitmapData>()));
             _predictionEngine = mlContext.Model.CreatePredictionEngine<YoloV4BitmapData, YoloV4Prediction>(model);
         }
-        public void Stop_Prediction() {
+        public void StopPrediction() {
             _cancellationTokenSource.Cancel();
         }
-        public void Output_One()
-        {
-            ImmutableList<YoloV4Result> result_list;
-            if (AllPredictionResults.TryTake(out result_list))
-                UI.OutputFunc(result_list);
-            else
-                UI.ErrorFunc("List is empty");
-        }
-        public void Predict_One(string image_name)
+
+        public void PredictOneAsync(string image_name)
         {
             UI.OutputFunc($"Начало обработки изображения '{Path.GetFileName(image_name)}'...");
             try
             {
                 var bitmap = new Bitmap(Image.FromFile(image_name));
+                if (_token.IsCancellationRequested)
+                    return;
                 YoloV4Prediction predict;
                 lock (_predictionEngine)
                 {
                     predict = _predictionEngine.Predict(new YoloV4BitmapData() { Image = bitmap });
                 }
-                AllPredictionResults.Add(ImmutableList<YoloV4Result>.Empty
-                    .AddRange(predict.GetResults(YoloV4Prediction.classesNames, scoreThres, iouThres)));
+                if (_token.IsCancellationRequested)
+                    return;
+                predict.GetResultsAsync(_handleOneAB, YoloV4Prediction.classesNames, scoreThres, iouThres);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                UI.ErrorFunc(ex.Message);
+                //UI.ErrorFunc(ex.Message);
                 return;
             }
-            
+
             UI.OutputFunc($"Конец обработки изображения {Path.GetFileName(image_name)}.");
         }
-        private ActionBlock<string> _predict_one_AB;
-        public async void Wait_For_Finish_Prediction()
+
+        public Task StartPredictionAsync()
         {
-            await _predict_one_AB.Completion;
+            Parallel.ForEach(_image_names, name => _prediction.SendAsync(name));
+            _prediction.Complete();
+            return _prediction.Completion;
         }
-        public async void Start_Prediction() //< == не работает
-        {
-            _predict_one_AB = new ActionBlock<string>(async name => Predict_One(name),
-                new ExecutionDataflowBlockOptions
-                {
-                    //CancellationToken = _token,
-                    MaxDegreeOfParallelism = Environment.ProcessorCount
-                }
-            ) ;
-            Parallel.ForEach(_image_names, name => _predict_one_AB.Post(name));
-            _predict_one_AB.Complete();
-            Thread.Sleep(100);
-            await _predict_one_AB.Completion;
-        }
+
     }
 }
