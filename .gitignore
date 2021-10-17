@@ -9,6 +9,9 @@
 # VS Code
 .vscode/
 
+# VS
+.vs/
+
 # Build results
 
 [Dd]ebug/
@@ -134,3 +137,4 @@ $RECYCLE.BIN/
 .DS_Store
 
 _NCrunch*
+Model ONNX/yolov4.onnx
