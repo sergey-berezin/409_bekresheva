@@ -272,8 +272,12 @@ namespace YOLOv4MLNet.DataStructures
                 string label = categories[(int)res[5]];
 
                 //resultsNms.Add(new YoloV4Result(res.Take(4).ToArray(), label, conf));
+                if (!ab.Post(new YoloV4Result(res.Take(4).ToArray(), label, conf)))
+                    throw new Exception("Can't handle the result");
+                /*
                 if (!await ab.SendAsync(new YoloV4Result(res.Take(4).ToArray(), label, conf)))
                     throw new Exception("Can't handle the result");
+                */
                 postProcesssedResults[f] = null;
 
                 var iou = postProcesssedResults.Select(bbox => bbox == null ? float.NaN : BoxIoU(res, bbox)).ToList();
