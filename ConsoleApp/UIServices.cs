@@ -22,5 +22,10 @@ namespace ConsoleApp
         {
             Console.WriteLine(res);
         }
+
+        void IErrorInterface.ErrorFunc(string res)
+        {
+            Console.WriteLine(res);
+        }
     }
 }

@@ -21,7 +21,12 @@ namespace Prediction
     {
         string GetPath();
     }
-    public interface IUIServices : IOutputInterface, IInputInterface { }
+
+    public interface IErrorInterface
+    {
+        void ErrorFunc(string s);
+    }
+    public interface IUIServices : IOutputInterface, IInputInterface, IErrorInterface { }
     public class PredictionClass
     {
         private const float scoreThres = 0.3f;
@@ -115,7 +120,7 @@ namespace Prediction
             }
             catch (Exception ex)
             {
-                //UI.ErrorFunc(ex.Message);
+                UI.ErrorFunc(ex.Message);
                 return;
             }
 

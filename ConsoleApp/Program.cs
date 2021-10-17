@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Prediction;
+using System.Diagnostics;
 
 namespace ConsoleApp
 {
@@ -33,19 +34,18 @@ namespace ConsoleApp
                 Console.WriteLine("Убедитесь, что в директории находятся только файлы .jpg");
             }
             
-            Task Init = Task.Run(() => viewModel.Init());
-            await Init;
+            viewModel.Init();
 
             //Запускаем обработку
             Task Prediction = viewModel.StartPredictionAsync();
             try
             {
-                Prediction.Wait();
+                await Prediction;
                 if (!Prediction.IsCompleted)
                     throw new Exception("Task is not complited");
             }catch (Exception ex)
             {
-                //Console.WriteLine(ex.Message);
+                Trace.WriteLine(ex.Message);
             }
             return;
         }
