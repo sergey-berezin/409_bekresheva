@@ -14,7 +14,7 @@ namespace ConsoleApp
             return Console.ReadLine();
         }
 
-        void IOutputInterface.OutputFunc(YoloV4Result res)
+        void IOutputInterface.ResultFunc(YoloV4Result res, string image_name)
         {
             Console.WriteLine(res);
         }
