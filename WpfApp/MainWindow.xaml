@@ -18,6 +18,7 @@
         <CommandBinding Command="{x:Static local:MainWindow.ChangeModelPath}" CanExecute="CanChangeMPCommandHandler" Executed="ChangeMPCommandHandler" />
         <CommandBinding Command="{x:Static local:MainWindow.StartCommand}" CanExecute="CanStartCommandHandler" Executed="StartCommandHandler" />
         <CommandBinding Command="{x:Static local:MainWindow.StopCommand}" CanExecute="CanStopCommandHandler" Executed="StopCommandHandler" />
+        <CommandBinding Command="{x:Static local:MainWindow.ResetCommand}" CanExecute="CanResetCommandHandler" Executed="ResetCommandHandler" />
     </Window.CommandBindings>
     
     <Grid>
@@ -28,11 +29,12 @@
         </Grid.RowDefinitions>
         <Menu Grid.Row="0" Height="25 px" VerticalAlignment="Top">
             <MenuItem Header="Options">
-                <!--<MenuItem Header="Change input folder" Command="{x:Static local:MainWindow.ChangeInputFolder}"></MenuItem>-->
+                <MenuItem Header="Change input folder" Command="{x:Static local:MainWindow.ChangeInputFolder}"></MenuItem>
                 <MenuItem Header="Change model path" Command="{x:Static local:MainWindow.ChangeModelPath}"></MenuItem>
             </MenuItem>
             <MenuItem Header="Start" Command="{x:Static local:MainWindow.StartCommand}"></MenuItem>
             <MenuItem Header="Stop" Command="{x:Static local:MainWindow.StopCommand}"></MenuItem>
+            <MenuItem Header="Reset" Command="{x:Static local:MainWindow.ResetCommand}"></MenuItem>
         </Menu>
         <Grid Grid.Row="1" Margin="10">
             <Grid.ColumnDefinitions>

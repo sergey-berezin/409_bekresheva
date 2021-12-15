@@ -35,7 +35,7 @@ namespace WpfApp
 
         void IOutputInterface.ResultFunc(YoloV4Result res, string image_name)
         {
-            lock (Results)
+            lock (this)
             {
                 Results = results.Add(res);
                 OnPropertyChanged(nameof(Results));
@@ -55,8 +55,6 @@ namespace WpfApp
                     ImagesInFolder = imagesInFolder.Add(image_name);
                     OnPropertyChanged(nameof(ImagesInFolder));
                 }
-            }
-            lock (ImagesOfClasses) { 
                 if (imagesOfClasses.ContainsKey(res.Label))
                 {
                     List<string> value = imagesOfClasses[res.Label];

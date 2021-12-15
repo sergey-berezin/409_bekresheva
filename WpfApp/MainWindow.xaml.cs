@@ -30,15 +30,15 @@ namespace WpfApp
         public static RoutedCommand StartCommand = new RoutedCommand("StartCommand", typeof(MainWindow));
         public static RoutedCommand ResetCommand = new RoutedCommand("ResetCommand", typeof(MainWindow));
         public static RoutedCommand StopCommand = new RoutedCommand("StopCommand", typeof(MainWindow));
+        bool initialization;
         public MainWindow()
         {
             CultureInfo.CurrentCulture = new CultureInfo("ru-RU");
             ViewModel = new ViewModel();
             DataContext = ViewModel;
+            ViewModel.Progress = "Пожалуйста, выберете файл с моделью или папку с картинками!";
+            initialization = false;
             InitializeComponent();
-            prediction = new PredictionClass(model_path, ViewModel);
-            prediction.Init();
-            ViewModel.Progress = "Готово к работе!";
         }
 
     }

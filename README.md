@@ -19,7 +19,8 @@
 
 ## Last changes:
 ### 2021/12/15:
-*feat: wpf interface + minor changes in Console App (had to save image_name with res)
+* feat: wpf interface + minor changes in Console App (had to save image_name with res)
+* feat: "reset" button, "change folder" button, "choose model" button + fixed behavior when using it
 
 ### 2021/10/05:
 * feat: stop on ctrl+c

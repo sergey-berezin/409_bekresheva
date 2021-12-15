@@ -26,7 +26,6 @@ namespace WpfApp
             results = ImmutableList<YoloV4Result>.Empty;
             numberOfClasses = ImmutableDictionary<string, int>.Empty;
             imagesOfClasses = ImmutableDictionary<string, List<string>>.Empty;
-            progress = "Идёт загрузка модели, пожалуйста, подождите";
         }
         public string Progress
         {
@@ -96,6 +95,21 @@ namespace WpfApp
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+        public void Reset()
+        {
+
+                lock (Results)
+                {
+                    ImagesInFolder = ImmutableList<string>.Empty;
+                    Results = ImmutableList<YoloV4Result>.Empty;
+                    StringResults = ImmutableList<string>.Empty;
+                }
+                lock (ImagesOfClasses)
+                {
+                    NumberOfClasses = ImmutableDictionary<string, int>.Empty;
+                    ImagesOfClasses = ImmutableDictionary<string, List<string>>.Empty;
+                }
         }
     }
 
