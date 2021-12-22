@@ -13,7 +13,7 @@ using System.Collections.Immutable;
 
 namespace WpfApp
 {
-    public partial class MainWindow : Window
+    public partial class ResultWindow : Window
     {
         private void CanChangeIFCommandHandler(object sender, CanExecuteRoutedEventArgs e)
         {

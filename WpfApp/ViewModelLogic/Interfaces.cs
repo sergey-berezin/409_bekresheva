@@ -9,7 +9,7 @@ using System.Windows;
 using Ookii.Dialogs.Wpf;
 using System.ComponentModel;
 using System.Collections.Immutable;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace WpfApp
 {
@@ -71,6 +71,20 @@ namespace WpfApp
                     ImagesOfClasses = imagesOfClasses.Add(res.Label, value);
                 }
             }
+            try
+            {
+                db.SaveOneToDB(res, image_name);
+            }
+            catch(DbUpdateConcurrencyException ex)
+            {
+                MessageBox.Show($"Meow DbUpdateConcurrencyException: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            
+            //
         }
 
         void IOutputInterface.OutputFunc(string res)

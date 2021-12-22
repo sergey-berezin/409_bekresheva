@@ -19,13 +19,14 @@ namespace WpfApp
         ImmutableList<YoloV4Result> results;
         ImmutableList<string> stringResults;
         string progress;
-
+        public DB db;
         public ViewModel()
         {
             imagesInFolder = ImmutableList<string>.Empty;
             results = ImmutableList<YoloV4Result>.Empty;
             numberOfClasses = ImmutableDictionary<string, int>.Empty;
             imagesOfClasses = ImmutableDictionary<string, List<string>>.Empty;
+            db = new DB();
         }
         public string Progress
         {
@@ -84,7 +85,7 @@ namespace WpfApp
 
         public void AddImage(string path)
         {
-            lock (imagesInFolder)
+            lock (this)
             {
                 ImagesInFolder = imagesInFolder.Add(path);
             }
@@ -99,13 +100,13 @@ namespace WpfApp
         public void Reset()
         {
 
-                lock (Results)
+                lock (this)
                 {
                     ImagesInFolder = ImmutableList<string>.Empty;
                     Results = ImmutableList<YoloV4Result>.Empty;
                     StringResults = ImmutableList<string>.Empty;
                 }
-                lock (ImagesOfClasses)
+                lock (this)
                 {
                     NumberOfClasses = ImmutableDictionary<string, int>.Empty;
                     ImagesOfClasses = ImmutableDictionary<string, List<string>>.Empty;
