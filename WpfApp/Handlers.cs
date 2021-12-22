@@ -77,9 +77,9 @@ namespace WpfApp
             initialization = true;
             ViewModel.Reset();
             prediction = new PredictionClass(model_path, ViewModel);
-            await Task.Run(() => {
+            await Task.Factory.StartNew(() => {
                 prediction.Init();
-            });
+            }, TaskCreationOptions.LongRunning);
             ViewModel.Progress = "Готово к работе!";
             initialization = false;
         }
