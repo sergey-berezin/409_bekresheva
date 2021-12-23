@@ -1,0 +1,56 @@
+﻿<Window x:Class="WpfApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp"
+        mc:Ignorable="d"
+        Title="WpfApp" Height="450" Width="800">
+
+    <Window.Resources>
+        <DataTemplate x:Key="ImagesTemplate">
+            <Image Source="{Binding}" Height="100" Width="100"/>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static local:MainWindow.ChangeInputFolder}" CanExecute="CanChangeIFCommandHandler" Executed="ChangeIFCommandHandler" />
+        <CommandBinding Command="{x:Static local:MainWindow.ChangeModelPath}" CanExecute="CanChangeMPCommandHandler" Executed="ChangeMPCommandHandler" />
+        <CommandBinding Command="{x:Static local:MainWindow.StartCommand}" CanExecute="CanStartCommandHandler" Executed="StartCommandHandler" />
+        <CommandBinding Command="{x:Static local:MainWindow.StopCommand}" CanExecute="CanStopCommandHandler" Executed="StopCommandHandler" />
+        <CommandBinding Command="{x:Static local:MainWindow.ResetCommand}" CanExecute="CanResetCommandHandler" Executed="ResetCommandHandler" />
+    </Window.CommandBindings>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25 px"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="25 px"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0" Height="25 px" VerticalAlignment="Top">
+            <MenuItem Header="Options">
+                <MenuItem Header="Change input folder" Command="{x:Static local:MainWindow.ChangeInputFolder}"></MenuItem>
+                <MenuItem Header="Change model path" Command="{x:Static local:MainWindow.ChangeModelPath}"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Start" Command="{x:Static local:MainWindow.StartCommand}"></MenuItem>
+            <MenuItem Header="Stop" Command="{x:Static local:MainWindow.StopCommand}"></MenuItem>
+            <MenuItem Header="Reset" Command="{x:Static local:MainWindow.ResetCommand}"></MenuItem>
+        </Menu>
+        <Grid Grid.Row="1" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            
+            <ListView x:Name="ImagesInFolderView" HorizontalAlignment="Stretch" Margin="10,10,10,10" VerticalAlignment="Stretch" Grid.Column="0" ItemsSource="{Binding ImagesInFolder}" ItemTemplate="{Binding Source={StaticResource ImagesTemplate}}"/>
+            <ListBox x:Name="ResultsListBox" HorizontalAlignment="Stretch" Margin="10,10,10,10" VerticalAlignment="Stretch" Grid.Column="1" ItemsSource="{Binding Results}"/>
+            <ListView x:Name="ClassesView" HorizontalAlignment="Stretch" Margin="10,10,10,10" VerticalAlignment="Stretch" Grid.Column="2" ItemsSource="{Binding NumberOfClasses}" SelectionChanged="ClassesViewSelectionChanged"/>
+            <ListView x:Name="ImagesResultListView" HorizontalAlignment="Stretch" Margin="10,10,10,10" VerticalAlignment="Stretch" Grid.Column="3" ItemTemplate="{Binding Source={StaticResource ImagesTemplate}}"/>
+
+        </Grid>
+        <TextBlock Grid.Row ="2" Name="Progress" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Text="{Binding Path=Progress, UpdateSourceTrigger=PropertyChanged}"/>
+
+    </Grid>
+</Window>
