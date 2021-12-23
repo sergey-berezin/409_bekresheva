@@ -73,7 +73,10 @@ namespace WpfApp
             }
             try
             {
-                db.SaveOneToDB(res, image_name);
+                lock (db)
+                {
+                    db.SaveOneToDB(res, image_name);
+                }
             }
             catch(DbUpdateConcurrencyException ex)
             {
@@ -83,8 +86,6 @@ namespace WpfApp
             {
                 MessageBox.Show(ex.Message);
             }
-            
-            //
         }
 
         void IOutputInterface.OutputFunc(string res)

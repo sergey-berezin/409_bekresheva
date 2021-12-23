@@ -26,17 +26,6 @@ namespace WpfApp
                 e.CanExecute = !prediction.InProgress;
             else e.CanExecute = true;
         }
-        private void CanChangeMPCommandHandler(object sender, CanExecuteRoutedEventArgs e)
-        {
-            if (initialization)
-            {
-                e.CanExecute = false;
-                return;
-            }
-            if (prediction != null)
-                e.CanExecute = !prediction.InProgress;
-            else e.CanExecute = true;
-        }
         private void CanStartCommandHandler(object sender, CanExecuteRoutedEventArgs e)
         {
             if (initialization)
@@ -83,21 +72,6 @@ namespace WpfApp
             ViewModel.Progress = "Готово к работе!";
             initialization = false;
         }
-        async private void ChangeMPCommandHandler(object sender, ExecutedRoutedEventArgs e)
-        {
-            initialization = true;
-            ViewModel.Reset();
-            Microsoft.Win32.OpenFileDialog dlg_open = new Microsoft.Win32.OpenFileDialog();
-            dlg_open.FileName = "model";
-            dlg_open.DefaultExt = ".onnx";
-            dlg_open.Filter = "ONNX documents|*.onnx";
-            if (dlg_open.ShowDialog() == true)
-                model_path = dlg_open.FileName;
-            else
-                throw new Exception("Fatal Error!");
-            ViewModel.Progress = "Пожалуйста, выберете папку с картинками!";
-            initialization = false;
-        }
         async private void StartCommandHandler(object sender, ExecutedRoutedEventArgs e)
         {
 
@@ -110,7 +84,7 @@ namespace WpfApp
             catch (Exception ex)
             {
                 ViewModel.Results = ImmutableList<YoloV4Result>.Empty;
-                MessageBox.Show("Ошибка предсказания или предсказание было завершено пользователем");
+                MessageBox.Show($"Ошибка предсказания или предсказание было завершено пользователем: {ex.Message}");
             }
         }
 

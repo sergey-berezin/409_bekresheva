@@ -6,26 +6,27 @@
         xmlns:local="clr-namespace:WpfApp"
         mc:Ignorable="d"
         Title="WpfApp" Height="450" Width="800">
-    <Window.CommandBindings>
-        <CommandBinding Command="{x:Static local:MainWindow.Start}" CanExecute="CanStartCommandHandler" Executed="StartCommandHandler" />
-    </Window.CommandBindings>
-    <Grid>
-        <Button x:Name="ButtonStart" Content="Start" HorizontalAlignment="Center" VerticalAlignment="Center" Command="{x:Static local:MainWindow.Start}"></Button>
-    </Grid>
-    <!--<Window.Resources>
-        <DataTemplate x:Key="ImagesTemplate">
-            <Image Source="{Binding}" Height="100" Width="100"/>
+
+    <Window.Resources>
+        <DataTemplate x:Key="ResultTemplate">
+            <StackPanel Margin="5">
+                <TextBlock FontSize="16" Text="{Binding Path=Label}" HorizontalAlignment="Center" />
+                <TextBlock FontSize="12" Text="{Binding Path=x1}" HorizontalAlignment="Center" />
+                <TextBlock FontSize="12" Text="{Binding Path=x2}" HorizontalAlignment="Center" />
+                <TextBlock FontSize="12" Text="{Binding Path=y1}" HorizontalAlignment="Center" />
+                <TextBlock FontSize="12" Text="{Binding Path=y2}" HorizontalAlignment="Center" />
+            </StackPanel>
         </DataTemplate>
     </Window.Resources>
 
     <Window.CommandBindings>
-        <CommandBinding Command="{x:Static local:MainWindow.ChangeInputFolder}" CanExecute="CanChangeIFCommandHandler" Executed="ChangeIFCommandHandler" />
-        <CommandBinding Command="{x:Static local:MainWindow.ChangeModelPath}" CanExecute="CanChangeMPCommandHandler" Executed="ChangeMPCommandHandler" />
-        <CommandBinding Command="{x:Static local:MainWindow.StartCommand}" CanExecute="CanStartCommandHandler" Executed="StartCommandHandler" />
-        <CommandBinding Command="{x:Static local:MainWindow.StopCommand}" CanExecute="CanStopCommandHandler" Executed="StopCommandHandler" />
-        <CommandBinding Command="{x:Static local:MainWindow.ResetCommand}" CanExecute="CanResetCommandHandler" Executed="ResetCommandHandler" />
+        <CommandBinding Command="{x:Static local:MainWindow.Update}" Executed="UpdateCommandHandler" />
+        <CommandBinding Command="{x:Static local:MainWindow.Start}" CanExecute="CanExecuteCommandHandler" Executed="StartCommandHandler" />
+        <CommandBinding Command="{x:Static local:MainWindow.ChangeMP}" CanExecute="CanExecuteCommandHandler" Executed="ChangeMPCommandHandler" />
+        <CommandBinding Command="{x:Static local:MainWindow.DeleteOne}" CanExecute="CanDeleteCommandHandler" Executed="DeleteOneCommandHandler" />
+        <CommandBinding Command="{x:Static local:MainWindow.DeleteAll}" CanExecute="CanExecuteCommandHandler" Executed="DeleteAllCommandHandler" />
     </Window.CommandBindings>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="25 px"></RowDefinition>
@@ -33,29 +34,29 @@
             <RowDefinition Height="25 px"></RowDefinition>
         </Grid.RowDefinitions>
         <Menu Grid.Row="0" Height="25 px" VerticalAlignment="Top">
-            <MenuItem Header="Options">
-                <MenuItem Header="Change input folder" Command="{x:Static local:MainWindow.ChangeInputFolder}"></MenuItem>
-                <MenuItem Header="Change model path" Command="{x:Static local:MainWindow.ChangeModelPath}"></MenuItem>
-            </MenuItem>
-            <MenuItem Header="Start" Command="{x:Static local:MainWindow.StartCommand}"></MenuItem>
-            <MenuItem Header="Stop" Command="{x:Static local:MainWindow.StopCommand}"></MenuItem>
-            <MenuItem Header="Reset" Command="{x:Static local:MainWindow.ResetCommand}"></MenuItem>
+            <MenuItem Header="Start" Command="{x:Static local:MainWindow.Start}"></MenuItem>
+            <MenuItem Header="Update" Command="{x:Static local:MainWindow.Update}"></MenuItem>
+            <MenuItem Header="Change model path" Command="{x:Static local:MainWindow.ChangeMP}"></MenuItem>
+            <MenuItem Header="Delete" Command="{x:Static local:MainWindow.DeleteOne}"></MenuItem>
+            <MenuItem Header="Delete All" Command="{x:Static local:MainWindow.DeleteAll}"></MenuItem>
         </Menu>
         <Grid Grid.Row="1" Margin="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            
-            <ListView x:Name="ImagesInFolderView" HorizontalAlignment="Stretch" Margin="10,10,10,10" VerticalAlignment="Stretch" Grid.Column="0" ItemsSource="{Binding ImagesInFolder}" ItemTemplate="{Binding Source={StaticResource ImagesTemplate}}"/>
+
+            <ListView x:Name="Results" Grid.Column="0" HorizontalAlignment="Stretch" Margin="10,10,10,10" VerticalAlignment="Stretch" ItemTemplate="{StaticResource ResultTemplate}" SelectionChanged="ResultViewSelectionChanged"/>
+            <Image x:Name="ResultImage" Grid.Column="1" HorizontalAlignment="Stretch" Margin="10,10,10,10" VerticalAlignment="Stretch" Height="100" Width="100"/>
+
+            <!--ItemTemplate="{Binding Source={StaticResource ResultTemplate}}"-->
+            <!--<ListView x:Name="ImagesInFolderView" HorizontalAlignment="Stretch" Margin="10,10,10,10" VerticalAlignment="Stretch" Grid.Column="0" ItemsSource="{Binding ImagesInFolder}" ItemTemplate="{Binding Source={StaticResource ImagesTemplate}}"/>
             <ListBox x:Name="ResultsListBox" HorizontalAlignment="Stretch" Margin="10,10,10,10" VerticalAlignment="Stretch" Grid.Column="1" ItemsSource="{Binding Results}"/>
             <ListView x:Name="ClassesView" HorizontalAlignment="Stretch" Margin="10,10,10,10" VerticalAlignment="Stretch" Grid.Column="2" ItemsSource="{Binding NumberOfClasses}" SelectionChanged="ClassesViewSelectionChanged"/>
-            <ListView x:Name="ImagesResultListView" HorizontalAlignment="Stretch" Margin="10,10,10,10" VerticalAlignment="Stretch" Grid.Column="3" ItemTemplate="{Binding Source={StaticResource ImagesTemplate}}"/>
+            <ListView x:Name="ImagesResultListView" HorizontalAlignment="Stretch" Margin="10,10,10,10" VerticalAlignment="Stretch" Grid.Column="3" ItemTemplate="{Binding Source={StaticResource ImagesTemplate}}"/>-->
 
         </Grid>
-        <TextBlock Grid.Row ="2" Name="Progress" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Text="{Binding Path=Progress, UpdateSourceTrigger=PropertyChanged}"/>
+        <!--<TextBlock Grid.Row ="2" Name="Progress" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Text="{Binding Path=Progress, UpdateSourceTrigger=PropertyChanged}"/>-->
 
-    </Grid>-->
+    </Grid>
 </Window>

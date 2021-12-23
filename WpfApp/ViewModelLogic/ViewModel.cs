@@ -19,14 +19,14 @@ namespace WpfApp
         ImmutableList<YoloV4Result> results;
         ImmutableList<string> stringResults;
         string progress;
-        public DB db;
+        public PicturesContext db;
         public ViewModel()
         {
             imagesInFolder = ImmutableList<string>.Empty;
             results = ImmutableList<YoloV4Result>.Empty;
             numberOfClasses = ImmutableDictionary<string, int>.Empty;
             imagesOfClasses = ImmutableDictionary<string, List<string>>.Empty;
-            db = new DB();
+            db = new PicturesContext();
         }
         public string Progress
         {
